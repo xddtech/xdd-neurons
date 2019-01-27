@@ -1,0 +1,11 @@
+.neurons-view-margin {
+    margin: 0px;
+    border: 0px;
+    padding: 0px;
+  }
+  
+  #neurons-view>canvas {
+    margin: 0px;
+    border: 0px;
+    padding: 0px;
+  }

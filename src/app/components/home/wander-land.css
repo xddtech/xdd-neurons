@@ -1,0 +1,11 @@
+.wander-land-margin {
+  margin: 0px;
+  border: 0px;
+  padding: 0px;
+}
+
+#wander-land-show>canvas {
+  margin: 0px;
+  border: 0px;
+  padding: 0px;
+}
