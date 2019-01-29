@@ -1,0 +1,20 @@
+<div class="container">
+    <div class="row text-center">
+      <h1>{{modelHeader}}</h1>
+    </div>
+    <div class="well">
+      <div *ngFor='let layer of layers; let num = index'>
+          <div class="row text-info bg-info small">
+              <b>{{num}}. {{layer.type}}</b>, nin: {{layer.conf.layer.nin}}, nout: {{layer.conf.layer.nout}},
+              hasBias: {{layer.conf.layer.hasBias}}, activationFn: {{layer.conf.layer.activationFn['@class']}} <br>
+              W: [{{layer.W}}] <br>
+              b: [{{layer.b}}] <br>
+          </div>
+        </div>
+      <div class="row text-info bg-info small">
+        <!--{{modelSourceText}}-->
+      </div>
+    </div>
+  
+    <wander-footer></wander-footer>
+  </div>  

@@ -24,6 +24,13 @@ export class NeuronService {
         return this.http.get('/index.html', {headers: reqHeaders, responseType: 'text'});
     }
 
+    getNetworkModel() {
+        let reqHeaders = new HttpHeaders({
+          'Accept':'application/json'
+        });
+        return this.http.get('/assets/csvexample-layers.json', {headers: reqHeaders, responseType: 'json'});
+    }
+
     getNavbarHeight(): number {
         if(NeuronService.navbarElement == null) {
           return 0;

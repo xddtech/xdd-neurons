@@ -12,6 +12,7 @@ import FooterComponent from './components/footer/footer';
 import HomeComponent from './components/home/home';
 import VRComponent from './components/vr/vr';
 import AboutComponent from './components/about/about';
+import ModelSourceComponent from './components/neuron-model/model-source'
 import NeuronViewComponent from './components/home/neurons-view';
 import {NeuronService} from './services/neuron-service';
 import {WanderService} from './services/wander-service';
@@ -24,6 +25,7 @@ import {WanderService} from './services/wander-service';
     HomeComponent,
     VRComponent,
     AboutComponent,
+    ModelSourceComponent,
     NeuronViewComponent
   ],
   imports: [
@@ -35,7 +37,7 @@ import {WanderService} from './services/wander-service';
     RouterModule.forRoot([
       {path: '',                    component: HomeComponent},
       {path: 'vr',                  component: VRComponent},
-      {path: 'model',               component: AboutComponent},
+      {path: 'model',               component: ModelSourceComponent},
       {path: 'about',               component: AboutComponent}
     ])
   ],
