@@ -3,6 +3,8 @@
 
 import {NeuronService} from '../../services/neuron-service';
 import {ModelLayersView} from './model-layers-view';
+import {ModelData} from './model-data';
+import {LayerData} from './layer-data';
 
 declare var $: JQueryStatic;
 
@@ -84,7 +86,7 @@ export class NeuronModelView {
 
   addShowObjects(): void {
     var axisHelper = new THREE.AxisHelper(100);
-    NeuronModelView.appScene.add(axisHelper);
+    //NeuronModelView.appScene.add(axisHelper);
 
     var geometry = new THREE.CylinderBufferGeometry( 0, 10, 30, 4, 1 );
     var material = new THREE.MeshPhongMaterial( { color: 0xbbbbbb, flatShading: true } );
@@ -95,10 +97,19 @@ export class NeuronModelView {
       mesh.position.z = ( Math.random() - 0.5 ) * 1000;
       mesh.updateMatrix();
       mesh.matrixAutoUpdate = false;
-      NeuronModelView.appScene.add( mesh );
+      //NeuronModelView.appScene.add( mesh );
     }
 
-    var modelLayersView = new ModelLayersView(this.neuronService, NeuronModelView.appScene);
+    //var modelLayersView = new ModelLayersView(this.neuronService, NeuronModelView.appScene);
+    this.addNeuronsModel();
+  }
+
+  addNeuronsModel(): void {
+    this.neuronService.getNetworkModel().subscribe((json: Object) => {
+      var modelData = new ModelData();
+      Object.assign(modelData, json);
+      var modelLayersView = new ModelLayersView(this.neuronService, NeuronModelView.appScene, modelData);
+    });
   }
 
   addBackground(): void {
@@ -118,7 +129,7 @@ export class NeuronModelView {
     light.position.set( 50, 200, 100 );
     light.position.multiplyScalar( 1.3 );
     light.castShadow = false;
-    //SleepingBearShow.appScene.add( light );
+    NeuronModelView.appScene.add( light );
     
     var light = new THREE.DirectionalLight( 0xdfebff, 0.8 );
     //light.position.multiplyScalar( 1 );

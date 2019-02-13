@@ -6807,6 +6807,24 @@ declare namespace THREE {
         setHand(hand: any): void;
         update(): void;
     }
+
+    //XDD
+    export class LineGeometry extends Object3D {
+        constructor();
+        setPositions(pos: any): void;
+        setColors(colors: any): void;
+    }
+
+    export class LineMaterial extends Object3D {
+        constructor(prams: any);
+        resolution: any;
+    }
+
+    export class Line2 extends Object3D {
+        constructor(geom: any, mat: any);
+        computeLineDistances(): void;
+        scale: any;
+    }
 }
 
 declare module 'three' {

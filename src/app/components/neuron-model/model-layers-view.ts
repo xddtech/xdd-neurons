@@ -4,15 +4,93 @@
 
 import {NeuronService} from '../../services/neuron-service';
 import {ModelCell} from './model-cell';
+import {ModelData} from './model-data';
+import {LayerData} from './layer-data';
 
 export class ModelLayersView {
 
-  constructor(private neuronService: NeuronService, private appSense: THREE.Scene) {
+  constructor(private neuronService: NeuronService, private appSense: THREE.Scene, private modelData: ModelData) {
      this.create();
   }
 
   create(): void {
-     new ModelCell(this.appSense);
+     //new ModelCell(this.appSense);
+     var layers = this.modelData.layers;
+     if (layers == null || layers.length == 0) {
+       console.warn('nuerons layers are empty');
+       return;
+     }
+     var ypos = 0;
+     var i: number;
+     var length = layers.length;
+     var prevLayer: ModelCell[];
+     for (i = 0; i < length; i++) {
+       //if (i == 0) {
+         //create input cell
+       //  prevLayer = this.createInputLayer(layers[0], ypos);
+       //}
+       var currentLayer = this.createLayer(i, layers[i], ypos);
+       ypos = ypos + 0.5;
+       if (prevLayer != null) {
+         this.linkLayerCells(prevLayer, currentLayer);
+       }
+       prevLayer = currentLayer;
+     }
+     
+     var currentLayer = this.createOutputLayer(layers[length-1], ypos);
+     this.linkLayerCells(prevLayer, currentLayer);
+  }
+
+  createOutputLayer(layer: LayerData, ypos: number): ModelCell[] {
+    var nout = layer.conf.layer.nout;
+    var cellList: ModelCell[] = new Array();
+    for (var i = 0; i < nout; i++) {
+      var xyz = new THREE.Vector3(i , ypos, 0);
+      var cell = new ModelCell(this.appSense, xyz, ModelCell.OUTPUT, 0, i);
+      cellList.push(cell);
+    }
+    return cellList;
+  }
+
+  createInputLayer(layer0: LayerData, ypos: number): ModelCell[] {
+    var nin0 = layer0.conf.layer.nin;
+    var cellList: ModelCell[] = new Array();
+    for (var i = 0; i < nin0; i++) {
+      var xyz = new THREE.Vector3(i , ypos - 0.5, 0);
+      var cell = new ModelCell(this.appSense, xyz, ModelCell.INPUT, 0, i);
+      cellList.push(cell);
+    }
+    return cellList;
+  }
+
+  createLayer(layerIndex, layer: LayerData, ypos: number): ModelCell[] {
+    var nin = layer.conf.layer.nin;
+    var cellList: ModelCell[] = new Array(); 
+    for (var i = 0; i < nin; i++) {
+      var xyz = new THREE.Vector3(i , ypos, 0);
+      var type = layerIndex == 0? ModelCell.INPUT : ModelCell.NET;
+      var cell = new ModelCell(this.appSense, xyz, type, layerIndex, i);
+      cellList.push(cell);
+    }
+    if (layer.b != null && layer.b.length > 0) {
+      var xyz = new THREE.Vector3(-1, ypos, 0);
+      var cell = new ModelCell(this.appSense, xyz, ModelCell.BIAS, layerIndex);
+      cellList.push(cell);
+    }
+    return cellList;
+  }
+
+  linkLayerCells(prevLayer: ModelCell[], currentLayer: ModelCell[]): void {
+    for (var i = 0; i < prevLayer.length; i++) {
+      var c1 = prevLayer[i];
+      for (var j = 0; j < currentLayer.length; j++) {
+        var c2 = currentLayer[j];
+        if ( c2.cellType != ModelCell.BIAS ) {
+          c1.createLink(c2, this.modelData.layers);
+        }
+      }
+    }
+
   }
 
   create1(): void {
