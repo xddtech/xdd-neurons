@@ -67,6 +67,7 @@ export class ModelCell {
   cellType: string;
   layerIndex: number; 
   seqIndex: number;
+  activation: string;
   
   cellMesh: THREE.Mesh;
 
@@ -78,6 +79,7 @@ export class ModelCell {
     this.cellType = params.cellType;
     this.layerIndex = params.layerIndex;
     this.seqIndex = params.seqIndex;
+    this.activation = params.activation;
     this.create();
   }
 
@@ -125,15 +127,19 @@ export class ModelCell {
       dx = -0.05;
       dy = -ModelCell.size - 0.3;
     } else if (this.cellType == ModelCell.OUTPUT) {
-      dx = 0.05;
-      dy = ModelCell.size + 0.1;
+      dx = -0.05;
+      dy = ModelCell.size/2 + 0.05;
     }
     var param = {
       font: AppGlobal.labelFont,
       size: lsize,
       height: lheight
     };
-    var textGeo = new THREE.TextGeometry(this.label, <THREE.TextGeometryParameters>param);
+    var pref = '';
+    if (this.activation.indexOf('Softmax') > 0) {
+      pref = 's';
+    }
+    var textGeo = new THREE.TextGeometry(pref + this.label, <THREE.TextGeometryParameters>param);
     var material = new THREE.MeshPhongMaterial({ color: 0x000000, flatShading: true });
     textGeo.computeBoundingBox();
     textGeo.computeVertexNormals();
