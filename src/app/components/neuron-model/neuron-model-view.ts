@@ -17,6 +17,7 @@ export class NeuronModelView {
   //static appCamControl: THREE.FirstPersonControls;
   //static appCamControl: THREE.TrackballControls;
   static appCamControl: any;
+  //static labelFont: any;
 
   constructor(private neuronService: NeuronService) {
     NeuronModelView.neuronServiceRef = neuronService;
@@ -88,6 +89,7 @@ export class NeuronModelView {
     var axisHelper = new THREE.AxisHelper(100);
     //NeuronModelView.appScene.add(axisHelper);
 
+    /*
     var geometry = new THREE.CylinderBufferGeometry( 0, 10, 30, 4, 1 );
     var material = new THREE.MeshPhongMaterial( { color: 0xbbbbbb, flatShading: true } );
     for ( var i = 0; i < 500; i ++ ) {
@@ -99,9 +101,29 @@ export class NeuronModelView {
       mesh.matrixAutoUpdate = false;
       //NeuronModelView.appScene.add( mesh );
     }
+    */
 
-    //var modelLayersView = new ModelLayersView(this.neuronService, NeuronModelView.appScene);
     this.addNeuronsModel();
+
+    /*
+    var loader = new THREE.FontLoader();
+    loader.load( '/libs/fonts/helvetiker_regular.typeface.json', function ( font ) {
+      var param = {
+        font: <any>font,
+        size: 0.2,
+        height: 0.1
+      };
+      var textGeo = new THREE.TextGeometry( 'Hello three.js!', <THREE.TextGeometryParameters>param);
+      var material = new THREE.MeshPhongMaterial( { color: 0xbb0000, flatShading: true } );
+      textGeo.computeBoundingBox();
+      textGeo.computeVertexNormals();
+      var mesh = new THREE.Mesh( textGeo, material );
+      mesh.position.x = -0;
+      mesh.position.y = -0;
+      mesh.position.z = -0;
+      //NeuronModelView.appScene.add( mesh );
+    } );
+    */
   }
 
   addNeuronsModel(): void {

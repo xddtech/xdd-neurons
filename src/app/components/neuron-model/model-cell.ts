@@ -2,6 +2,8 @@
 /// <reference path="../../../typings/_reference-jquery.d.ts" />
 
 import {LayerData} from './layer-data';
+import {NeuronModelView} from './neuron-model-view';
+import {AppGlobal} from '../../app.global';
 
 export class ModelCell {
   static size = 0.2;
@@ -59,17 +61,23 @@ export class ModelCell {
   static INPUT = 'INPUT';
   static OUTPUT = 'OUTPUT';
 
+  appScene: THREE.Scene;
   xyz: THREE.Vector3;
+  label = null;
+  cellType: string;
+  layerIndex: number; 
+  seqIndex: number;
+  
   cellMesh: THREE.Mesh;
 
-  constructor(private appSense: THREE.Scene, xyz: THREE.Vector3, public cellType: string, public layerIndex: number, 
-      public seqIndex?: number) {
+  constructor(params: any) {
     ModelCell.initStatic();
-    if (xyz == null) {
-      this.xyz = new THREE.Vector3(0, 0, 0);
-    } else {
-      this.xyz = xyz;
-    }
+    this.appScene = params.appScene;
+    this.xyz = (params.xyz == null)? new THREE.Vector3(0, 0, 0) : params.xyz;
+    this.label = params.label;
+    this.cellType = params.cellType;
+    this.layerIndex = params.layerIndex;
+    this.seqIndex = params.seqIndex;
     this.create();
   }
 
@@ -90,16 +98,50 @@ export class ModelCell {
     mesh.position.z = this.xyz.z;
     this.cellMesh = mesh;
     mesh.updateMatrix();
-    this.appSense.add(mesh);
+    this.appScene.add(mesh);
 
     if (this.cellType == ModelCell.INPUT) {
       var from = this.xyz.clone();
       from.setY(from.y - 0.3);
       var direction = this.xyz.clone().sub(from);
-      var length = direction.length();
-      var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, length, 0xff00ff);
-      this.appSense.add( arrowHelper );
+      var length = direction.length() - ModelCell.size/2;
+      var headLength = 0.4 * length;
+      var headWidth = 0.8 * headLength;
+      var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, length, 0xff00ff, headLength, headWidth);
+      this.appScene.add( arrowHelper );
     }
+
+    if (this.label != null) {
+      this.createCellLabel();
+    }
+  }
+
+  createCellLabel(): void {
+    var lsize = 0.1;
+    var lheight = 0.025;
+    var dx = 0;
+    var dy = 0;
+    if (this.cellType == ModelCell.INPUT) {
+      dx = -0.05;
+      dy = -ModelCell.size - 0.3;
+    } else if (this.cellType == ModelCell.OUTPUT) {
+      dx = 0.05;
+      dy = ModelCell.size + 0.1;
+    }
+    var param = {
+      font: AppGlobal.labelFont,
+      size: lsize,
+      height: lheight
+    };
+    var textGeo = new THREE.TextGeometry(this.label, <THREE.TextGeometryParameters>param);
+    var material = new THREE.MeshPhongMaterial({ color: 0x000000, flatShading: true });
+    textGeo.computeBoundingBox();
+    textGeo.computeVertexNormals();
+    var mesh = new THREE.Mesh(textGeo, material);
+    mesh.position.x = this.xyz.x + dx;
+    mesh.position.y = this.xyz.y + dy;
+    mesh.position.z = this.xyz.z;
+    this.appScene.add(mesh);
   }
 
   createLink(targetCell: ModelCell, layers: LayerData[]): void {
@@ -147,7 +189,7 @@ export class ModelCell {
     var line2 = new THREE.Line2( lineGeom, lineMat );
     line2.computeLineDistances();
     line2.scale.set(1, 1, 1 );
-    this.appSense.add( line2 );
+    this.appScene.add( line2 );
   }
 
   getLinkSizeColor(weight: number): any {
