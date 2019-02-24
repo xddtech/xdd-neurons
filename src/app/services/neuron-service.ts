@@ -28,7 +28,10 @@ export class NeuronService {
         let reqHeaders = new HttpHeaders({
           'Accept':'application/json'
         });
-        return this.http.get('/assets/csvexample-layers.json', {headers: reqHeaders, responseType: 'json'});
+        //return this.http.get('/assets/csvexample-layers.json', {headers: reqHeaders, responseType: 'json'});
+        //return this.http.get('assets/csvexample-layers.json', {headers: reqHeaders, responseType: 'json'});
+        //return this.http.get('/assets/regression-math-layers.json', {headers: reqHeaders, responseType: 'json'});
+        return this.http.get('/assets/csvexample-30-layers.json', {headers: reqHeaders, responseType: 'json'});
     }
 
     getNavbarHeight(): number {

@@ -10,7 +10,7 @@ if (environment.production) {
 }
 
 var loader = new THREE.FontLoader();
-loader.load( '/libs/fonts/helvetiker_regular.typeface.json', function ( font ) {
+loader.load( '/libs/fonts/helvetiker_regular_typeface.json', function ( font ) {
   AppGlobal.labelFont = font;
   platformBrowserDynamic().bootstrapModule(AppModule);
 });

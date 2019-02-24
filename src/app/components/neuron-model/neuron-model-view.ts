@@ -43,17 +43,17 @@ export class NeuronModelView {
   }
 
   addCameraAndControls(): void {
-    var fov = 50;
+    var fov = 30;
     var aspect = this.getCameraAspect();
     var near = 0.1;
-    var far = 1000;
+    var far = 500;
     NeuronModelView.appCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     var camera = NeuronModelView.appCamera;
-    camera.position.x = 5;
-    camera.position.y = 5;
-    camera.position.z = 10;
+    camera.position.x = 0;
+    camera.position.y = 2;
+    camera.position.z = 12;
 
-    var lookAt = new THREE.Vector3(0, 0, 0);
+    var lookAt = new THREE.Vector3(0, 8, -1);
     camera.lookAt(lookAt);
     
     /*

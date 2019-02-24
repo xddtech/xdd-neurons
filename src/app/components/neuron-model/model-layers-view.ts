@@ -13,8 +13,8 @@ export class ModelLayersView {
 
   cellGap = 1;
   maxRowCells = 20;
-  cellLayout = ModelLayersView.ROW_FILL;
-  //cellLayout = ModelLayersView.SQUARE;
+  //cellLayout = ModelLayersView.ROW_FILL;
+  cellLayout = ModelLayersView.SQUARE;
 
   constructor(private neuronService: NeuronService, private appScene: THREE.Scene, private modelData: ModelData) {
      this.create();
@@ -26,7 +26,7 @@ export class ModelLayersView {
        console.warn('nuerons layers are empty');
        return;
      }
-     var ypos = 0;
+     var ypos = -1.5;
      var layerIndex: number;
      var length = layers.length;
      var prevLayer: ModelCell[];
@@ -59,18 +59,28 @@ export class ModelLayersView {
 
   createGenericLayer(layerIndex: number, layer: LayerData, ypos: number, cnum: number, type: any,
       isOutput: boolean, activation: string): ModelCell[] {
+    var hasBias = false;
+    if (isOutput == false && layer.b != null && layer.b.length > 0) {
+      hasBias = true;
+    }
+    var totalNum = hasBias? cnum + 1 : cnum;
+
     //var nin = layer.conf.layer.nin;
+    var xcenter = 0;
+    var zcenter = 0;
     var maxXRowCells = this.maxRowCells;
     if (this.cellLayout == ModelLayersView.SQUARE) {
-      maxXRowCells = Math.round(Math.sqrt(cnum));
+      maxXRowCells = Math.round(Math.sqrt(totalNum));
+      xcenter = Math.floor((maxXRowCells - 1) * this.cellGap /2);
+      zcenter = Math.floor(xcenter);
     }
-    var maxZRowCells = Math.ceil(cnum / maxXRowCells);
+    var maxZRowCells = Math.ceil(totalNum / maxXRowCells);
 
     var cellList: ModelCell[] = new Array();
     var xCounter = 0;
     var xpos = 0;
     var zpos = 0;
-    for (var i = 0; i < cnum; i++) {
+    for (var i = 0; i < totalNum; i++) {
       if (xCounter >= maxXRowCells) {
         xCounter = 0;
         zpos -= this.cellGap;
@@ -78,16 +88,22 @@ export class ModelLayersView {
       }
       xCounter++;
 
-      var xyz = new THREE.Vector3(xpos , ypos, zpos);
-      //var type = layerIndex == 0? ModelCell.INPUT : ModelCell.NET;
-      var label = null;
-      if (type === ModelCell.INPUT || type === ModelCell.OUTPUT) {
-        label = '' + i;
+      var xyz = new THREE.Vector3(xpos - xcenter , ypos, zpos + zcenter);
+      var ctype = type;
+      if (hasBias && (i == totalNum - 1)) {
+        ctype = ModelCell.BIAS;
       }
+      var label = null;
+      if (ctype === ModelCell.INPUT || ctype === ModelCell.OUTPUT) {
+        label = '' + i;
+      } else if (ctype == ModelCell.BIAS) {
+        label = 'b';
+      }
+
       var cell = new ModelCell({
         appScene: this.appScene, 
         xyz: xyz, 
-        cellType: type, 
+        cellType: ctype, 
         layerIndex: layerIndex, 
         seqIndex: i,
         label: label,
@@ -98,6 +114,7 @@ export class ModelLayersView {
 
       xpos += this.cellGap;
     }
+    /*
     // output has no bias cell
     if (isOutput) {
       return cellList;
@@ -114,6 +131,7 @@ export class ModelLayersView {
       cellList.push(cell);
       cell.label = "b";
     }
+    */
     return cellList;
   }
 
